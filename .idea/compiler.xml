@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="cloud-provider-payment8002" />
+        <module name="cloud-api-commons" />
+        <module name="cloudalibaba-nacos-config-client3377" />
+        <module name="seata-order-service2001" />
+        <module name="cloud-provider-payment" />
+        <module name="cloud-gateway9527" />
+        <module name="cloudalibaba-sentinel-gateway9528" />
+        <module name="cloudalibaba-provider-payment9002" />
+        <module name="cloudalibaba-provider-payment9001" />
+        <module name="cloudalibaba-consumer-nacos-order83" />
+        <module name="seata-account-service2003" />
+        <module name="cloud-consumer-order" />
+        <module name="seata-storage-service2002" />
+        <module name="cloudalibaba-sentinel-service8401" />
+        <module name="cloud-consumer-feign-order" />
+      </profile>
+    </annotationProcessing>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="cloud-api-commons" options="-parameters" />
+      <module name="cloud-consumer-feign-order" options="-parameters" />
+      <module name="cloud-consumer-order" options="-parameters" />
+      <module name="cloud-gateway9527" options="-parameters" />
+      <module name="cloud-provider-payment" options="-parameters" />
+      <module name="cloud-provider-payment8002" options="-parameters" />
+      <module name="cloudalibaba-consumer-nacos-order83" options="-parameters" />
+      <module name="cloudalibaba-nacos-config-client3377" options="-parameters" />
+      <module name="cloudalibaba-provider-payment9001" options="-parameters" />
+      <module name="cloudalibaba-provider-payment9002" options="-parameters" />
+      <module name="cloudalibaba-sentinel-gateway9528" options="-parameters" />
+      <module name="cloudalibaba-sentinel-service8401" options="-parameters" />
+      <module name="seata-account-service2003" options="-parameters" />
+      <module name="seata-order-service2001" options="-parameters" />
+      <module name="seata-storage-service2002" options="-parameters" />
+    </option>
+  </component>
+</project>

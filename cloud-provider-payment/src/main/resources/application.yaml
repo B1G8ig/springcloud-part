@@ -1,0 +1,31 @@
+server:
+  port: 8001
+spring:
+  profiles:
+    active: dev
+    # 数据库连接配置
+  datasource:
+    druid:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://localhost:3306/sm_db?characterEncoding=utf8&useSSL=false&serverTimezone=GMT%2B8&rewriteBatchedStatements=true&allowPublicKeyRetrieval=true
+      username: root
+      password: 123456
+    type: com.alibaba.druid.pool.DruidDataSource
+
+#mybatis-plus配置
+mybatis-plus:
+  type-aliases-package: com.hxy.pojo
+  global-config:
+    db-config:
+      logic-delete-field: isDeleted  #全局逻辑删除
+      id-type: auto #主键策略自增长
+      table-prefix: t_
+
+# ========================zipkin===================
+management:
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans
+  tracing:
+    sampling:
+      probability: 1.0 #采样率默认为0.1(0.1就是10次只能有一次被记录下来)，值越大收集越及时。

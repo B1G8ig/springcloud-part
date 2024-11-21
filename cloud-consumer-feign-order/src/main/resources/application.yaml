@@ -1,0 +1,145 @@
+server:
+  port: 81
+spring:
+  application:
+    name: cloud-consumer-openfeign-order
+  cloud:
+    openfeign:
+      # 开启请求和回应的压缩功能 节约带宽 提高性能
+      compression:
+        request:
+          enabled: true
+          min-request-size: 2048  # 最小触发压缩的大小
+          mime-types: text/xml,application/xml,application/json # 触发压缩的数据类型
+        response:
+          enabled: true
+      # hc5配置
+      httpclient:
+        hc5:
+          enabled: true
+      client:
+        config:
+          # default为全局配置 如果专门设置哪个服务的超时时间，就设置哪个服务的配置名
+          #default
+          cloud-payment-service:
+            # 连接超时时间
+            connect-timeout: 20000
+            # 读取超时时间
+            read-timeout: 20000
+      # 开启circuitbreaker和分组激活 spring.cloud.openfeign.circuitbreaker.enabled
+      circuitbreaker:
+        enabled: true
+        group:
+          enabled: false
+    # consul配置
+    consul:
+      host: localhost
+      port: 8500
+      discovery:
+        service-name: ${spring.application.name}
+        prefer-ip-address: true
+
+# feign日志以什么级别监控哪个接口
+#logging:
+#  level:
+#    com:
+#      hxy:
+#        apis:
+#          PayFeignApi: debug
+
+# Resilience4j CircuitBreaker 按照次数：COUNT_BASED 的例子
+#  6次访问中当执行方法的失败率达到50%时CircuitBreaker将进入开启OPEN状态(保险丝跳闸断电)拒绝所有请求。
+#  等待5秒后，CircuitBreaker 将自动从开启OPEN状态过渡到半开HALF_OPEN状态，允许一些请求通过以测试服务是否恢复正常。
+#  如还是异常CircuitBreaker 将重新进入开启OPEN状态；如正常将进入关闭CLOSE闭合状态恢复正常处理请求。
+#resilience4j:
+#  circuitbreaker:
+#    configs:
+#      default:
+#        failure-rate-threshold: 50 #设置有50%的调用失败时开启熔断器，超过失败请求百分比CircuitBreaker将进入OPEN状态
+#        sliding-window-type: COUNT_BASED # 滑动窗口类型，滑动窗口类型为COUNT_BASED，即基于调用次数
+#        sliding-window-size: 6 # 滑动窗口大小设置为6个请求 type设置为TIME_BASED则表示6秒
+#        minimum-number-of-calls: 6 # 熔断器计算失败率或慢调用率所需的最小样本(每个滑动窗口周期) 这里设置为6 如果在一个滑动窗口周期中，记录的5次请求全部失败，但是没有达到最小样本数，熔断器也不会开启
+#        automatic-transition-from-open-to-half-open-enabled: true # 开启由开启状态转变为半开状态
+#        wait-duration-in-open-state: 5s # 熔断器开启状态到半开状态需要的等待时间
+#        permitted-number-of-calls-in-half-open-state: 2 # 半开状态下允许通过的请求数
+#        record-exceptions:
+#          - java.lang.Exception
+#    instances:
+#      cloud-payment-service:
+#        baseConfig: default
+
+#resilience4j:
+#  timelimiter:
+#    configs:
+#      default:
+#        timeout-duration: 10s   # 默认限制远程1s 超过1s抛出超时异常，配置了降级，就直接走降级逻辑
+#  circuitbreaker:
+#    configs:
+#      default:
+#        failure-rate-threshold: 50
+#        sliding-window-type: TIME_BASED
+#        sliding-window-size: 2
+#        slow-call-duration-threshold: 2s   # 慢调用时间阈值，高于这个阈值的视为慢调用并增加慢调用比例
+#        slow-call-rate-threshold: 30   # 慢调用比例, 超过这个比例，熔断器将进入OPEN状态
+#        minimum-number-of-calls: 2
+#        permitted-number-of-calls-in-half-open-state: 2
+#        wait-duration-in-open-state: 5s
+#        record-exceptions:
+#          - java.lang.Exception
+#    instances:
+#      cloud-payment-service:
+#        baseConfig: default
+
+# resilience4j bulkhead - 信号量
+#resilience4j:
+#  bulkhead:
+#    configs:
+#      default:
+#        max-concurrent-calls: 2   #隔离允许并发线程执行的最大数量
+#        max-wait-duration: 1s     #当达到最大并发调用数量时，新的线程阻塞时间为1s，超过1s直接fallback
+#    instances:
+#      cloud-payment-service:
+#        baseConfig: default
+#  timelimiter:
+#    configs:
+#      default:
+#        timeout-duration: 20s
+
+# resilience4j bulkhead - 线程池
+#resilience4j:
+#  timelimiter:
+#    configs:
+#      default:
+#        timeout-duration: 10s
+#  thread-pool-bulkhead:
+#    configs:
+#      default:
+#        core-thread-pool-size: 1
+#        max-thread-pool-size: 1
+#        queue-capacity: 1
+#    instances:
+#      cloud-payment-service:
+#        baseConfig: default
+
+resilience4j:
+  ratelimiter:
+    configs:
+      default:
+        limit-for-period: 2   # 在一次刷新周期内，允许执行的最大请求数
+        limit-refresh-period: 1s   # 限流器每隔1s刷新一次，将允许处理的最大请求数量重置为2
+        timeout-duration: 1   # 线程等待权限的默认等待时间
+    instances:
+      cloud-payment-service:
+        baseConfig: default
+
+# zipkin图形展现地址和采样率设置
+management:
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans
+  tracing:
+    sampling:
+      probability: 1.0 #采样率默认为0.1(0.1就是10次只能有一次被记录下来)，值越大收集越及时。
+
+
+
